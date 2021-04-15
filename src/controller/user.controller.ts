@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
+import IUser from '../interface/user.interface';
 import User from '../model/user.model';
 dotenv.config();
 
@@ -36,8 +36,8 @@ const findByCredentials = async ({
 
 const signup = async (req: Request, res: Response) => {
   try {
-    const user = req.body;
-    // console.log(req.baseUrl);
+    const user: IUser = req.body;
+
     const newUser = await new User(user);
     newUser
       .save()

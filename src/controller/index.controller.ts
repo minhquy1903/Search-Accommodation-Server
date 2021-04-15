@@ -1,3 +1,3 @@
 import userController from './user.controller';
-
-export default { userController };
+import filterController from './filter.controller';
+export default { userController, filterController };
