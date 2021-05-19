@@ -5,7 +5,7 @@ import {
   IFilterDistrict,
   IFilterProvince,
   IFilterWard,
-} from '../interface/filterPro.interface';
+} from '../interface/filter.interface';
 
 const getAllProvince = async (req: Request, res: Response) => {
   try {
@@ -16,16 +16,14 @@ const getAllProvince = async (req: Request, res: Response) => {
     data.results.forEach((element, i) => {
       delete element.province_type;
 
-      if (i < 5)
-        element.province_name = element.province_name.slice(
-          10,
-          element.province_name.length,
-        );
-      else
-        element.province_name = element.province_name.slice(
-          5,
-          element.province_name.length,
-        );
+      element.id = element.province_id!;
+      delete element.province_id;
+
+      element.value = element.province_name!;
+      delete element.province_name;
+
+      if (i < 5) element.value = element.value.slice(10, element.value.length);
+      else element.value = element.value.slice(5, element.value.length);
     });
     const filterProvince = data.results;
 
@@ -49,6 +47,12 @@ const getDistrictOfProvince = async (req: Request, res: Response) => {
       delete element.district_type;
       delete element.lat;
       delete element.lng;
+
+      element.id = element.district_id!;
+      delete element.district_id;
+
+      element.value = element.district_name!;
+      delete element.district_name;
     });
     const filterDistrict = data.results;
 
@@ -68,6 +72,12 @@ const getWardOfDistrict = async (req: Request, res: Response) => {
 
     data.results.forEach((element, i) => {
       delete element.ward_type;
+
+      element.id = element.ward_id!;
+      delete element.ward_id;
+
+      element.value = element.ward_name!;
+      delete element.ward_name;
     });
     const filterWard = data.results;
 

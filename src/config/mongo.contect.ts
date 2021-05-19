@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 import config from './config';
 
 const connectMongoDB = () => {
-  console.log(config.mongodb.url);
+  console.log(config.mongodb.uri);
   mongoose
-    .connect(config.mongodb.url, config.mongodb.option)
+    .connect(config.mongodb.uri, config.mongodb.option)
     .then(() => {
       console.log('Database connection successful');
     })

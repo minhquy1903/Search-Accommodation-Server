@@ -1,8 +1,8 @@
 import express from 'express';
-// import logging from './config/logging';
 import config from './config/config';
 import router from './routes/index.routes';
 import connectMongoDB from './config/mongo.contect';
+import morgan from 'morgan';
 
 const app: express.Application = express();
 
@@ -21,6 +21,8 @@ app.all('*', (req, res, next) => {
   );
   next();
 });
+
+app.use(morgan('tiny'));
 
 app.use(express.json());
 

@@ -1,6 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import IUser from '../interface/user.interface';
 
 const UserSchema: Schema = new Schema(
@@ -12,7 +11,6 @@ const UserSchema: Schema = new Schema(
     },
     email: {
       type: String,
-      unique: true,
       lowercase: true,
       // validate: (value) => {
       //   if (!validator.isEmail(value)) {
@@ -39,6 +37,7 @@ const UserSchema: Schema = new Schema(
       require: true,
     },
     money: Number,
+    active: Boolean,
   },
   {
     timestamps: true,

@@ -10,10 +10,10 @@ const MONGO_OPTION = {
   useCreateIndex: true,
   useFindAndModify: false,
   useUnifiedTopology: true,
-  autoIndex: true, //
+  autoIndex: true,
 };
 
-const MONGO_USERNAME = process.env.MONGO_USERNAME || 'minhquy';
+const MONGO_USERNAME = process.env.MONGO_USERNAME || '127.0.0.1:27017';
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '0964564273p';
 const DATABASE_NAME = process.env.DATABASE_NAME || 'sativa_accommodation';
 const MONGO_HOST = process.env.MONGO_URL || 'mink.c3zle.gcp.mongodb.net';
@@ -23,7 +23,7 @@ const MONGO = {
   username: MONGO_USERNAME,
   password: MONGO_PASSWORD,
   option: MONGO_OPTION,
-  url: `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${DATABASE_NAME}`,
+  uri: `mongodb://${MONGO_USERNAME}/${DATABASE_NAME}`,
 };
 
 const SERVER = {
