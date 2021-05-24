@@ -106,7 +106,6 @@ const login = async (req: Request, res: Response) => {
       _id: user.id,
       name: user.name,
       phone: user.phone,
-      email: user.email,
       money: user.money,
       type: user.type,
       active: user.active,
@@ -170,4 +169,41 @@ const confirmPhone = async (req: Request, res: Response) => {
   }
 };
 
-export default { signup, login, confirmPhone };
+const getUserInfo = async (req: Request, res: Response) => {
+  const _id = req.params._id;
+  try {
+    const user = await User.findOne({ _id: _id });
+    console.log(user);
+
+    if (user) {
+      const userInformation = {
+        name: user.name,
+        phone: user.phone,
+        money: user.money,
+        type: user.type,
+        active: user.active,
+      };
+      console.log(userInformation);
+
+      const response: IResponse<any> = {
+        result: true,
+        data: userInformation,
+        error: null,
+      };
+      res.status(200).json({ data: response });
+      return;
+    }
+
+    res.status(404).json({ data: 'not found' });
+  } catch (error) {
+    const response: IResponse<any> = {
+      result: false,
+      data: null,
+      error: error,
+    };
+
+    res.status(200).json({ data: response });
+  }
+};
+
+export default { signup, login, confirmPhone, getUserInfo };

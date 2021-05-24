@@ -9,15 +9,6 @@ const UserSchema: Schema = new Schema(
       required: true,
       trim: true,
     },
-    email: {
-      type: String,
-      lowercase: true,
-      // validate: (value) => {
-      //   if (!validator.isEmail(value)) {
-      //     throw new Error({ error: "Invalid Email address" });
-      //   }
-      // },
-    },
     phone: {
       type: String,
       required: true,

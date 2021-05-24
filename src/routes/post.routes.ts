@@ -8,17 +8,15 @@ const postRouter = express.Router();
 postRouter.get('/', (req, res) => {
   res.json({ result: 'hello middleware' });
 });
+
 postRouter.post('/create-post', controller.postController.createPost);
-postRouter.get(
-  '/get-post-detail/:_id',
-  controller.postController.getPostDetail,
-);
-postRouter.get('/filter-post', controller.postController.filterPost);
-postRouter.get('/get-hot-post', controller.postController.getHotPosts);
-postRouter.get(
-  '/get-post-page/:page',
-  controller.postController.getPostsOfPage,
-);
-postRouter.get('/count-posts', controller.postController.countPosts);
+
+postRouter.get('/get-post/:_id', controller.postController.getPostDetail);
+
+postRouter.post('/filter-posts/:page', controller.postController.filterPost);
+
+postRouter.post('/count-posts', controller.postController.countPosts);
+
+postRouter.put('/update-post/:_id', controller.postController.updatePost);
 
 export default postRouter;

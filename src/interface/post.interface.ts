@@ -8,12 +8,11 @@ export default interface IPost extends Document {
   accommodation: IAccommodation;
 }
 
-interface IAccommodation {
+export interface IAccommodation {
   title: string;
   description: Array<string>;
   area: number;
   retail: number;
-  person: number;
   typeAccommdation: number;
   address: IAddress;
   images: Array<IImage>;

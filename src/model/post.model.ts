@@ -29,6 +29,7 @@ const PostSchema = new Schema({
       type: [Object],
       require: true,
     },
+    area: { type: Number, require: true },
     typeAccommdation: Number,
   },
   user_id: {
