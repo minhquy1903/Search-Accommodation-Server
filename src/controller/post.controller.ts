@@ -117,6 +117,8 @@ const countPosts = async (req: Request, res: Response) => {
   }
 };
 
+const updatePost = (req: Request, res: Response) => {};
+
 const createPost = (req: Request, res: Response) => {
   const { timeStart, timeEnd, typePost, user_id, accommodation } = req.body;
 
@@ -230,4 +232,5 @@ export default {
   filterPost,
   createPost,
   countPosts,
+  updatePost,
 };
