@@ -190,8 +190,8 @@ const getUserInfo = async (req: Request, res: Response) => {
         data: userInformation,
         error: null,
       };
-      res.status(200).json({ data: response });
-      return;
+
+      return res.status(200).json({ data: response });
     }
 
     res.status(404).json({ data: 'not found' });
@@ -206,4 +206,33 @@ const getUserInfo = async (req: Request, res: Response) => {
   }
 };
 
-export default { signup, login, confirmPhone, getUserInfo };
+const updateUserInformation = async (req: Request, res: Response) =>{
+  try {
+    
+    const {userId, name, phone} = req.body;
+
+    const userInfo = await User.findOneAndUpdate({_id: userId},{
+      name: name,
+      phone: phone
+    })
+
+    const response: IResponse<any> = {
+      result: true,
+      data: userInfo,
+      error: null,
+    };
+    
+    return res.status(200).json({ data: response });
+
+  } catch (error) {
+    const response: IResponse<any> = {
+      result: false,
+      data: null,
+      error: error.error,
+    };
+    
+    return res.status(200).json({ data: response });
+  }
+}
+
+export default { signup, login, confirmPhone, getUserInfo, updateUserInformation };

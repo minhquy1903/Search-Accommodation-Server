@@ -6,7 +6,7 @@ const getPostDetail = async (req: Request, res: Response) => {
   try {
     const _id: string = req.params._id;
 
-    const post = await Post.findById(_id);
+    const post = await Post.findById(_id).populate('user_id');
 
     const response: IResponse<any> = {
       result: true,
@@ -165,6 +165,32 @@ const createPost = (req: Request, res: Response) => {
   }
 };
 
+const getPostByUserId = async (req: Request, res: Response) => {
+  try {
+    
+    const userId = req.params.userId;
+
+    const posts = await Post.find({user_id: userId});
+
+    const response: IResponse<any> = {
+      result: true,
+      data: posts,
+      error: null,
+    };
+
+    res.status(200).json({ data: response });
+
+  } catch (error) {
+    const response: IResponse<any> = {
+      result: false,
+      data: null,
+      error: error.error,
+    };
+
+    res.status(200).json({ data: response });
+  }
+};
+
 const getFilterQuery = (obj: object) => {
   return Object.entries(obj)
     .filter((item) => item[1])
@@ -233,4 +259,5 @@ export default {
   createPost,
   countPosts,
   updatePost,
+  getPostByUserId
 };

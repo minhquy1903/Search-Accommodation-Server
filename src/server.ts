@@ -6,8 +6,6 @@ import morgan from 'morgan';
 
 const app: express.Application = express();
 
-const NAMESPACE = 'server';
-
 app.all('*', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Credentials', 'true');
