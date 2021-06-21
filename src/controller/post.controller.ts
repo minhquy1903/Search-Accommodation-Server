@@ -1,12 +1,12 @@
-import { Request, Response } from 'express';
-import IResponse from '../interface/response.interface';
-import Post from '../model/post.model';
+import { Request, Response } from "express";
+import IResponse from "../interface/response.interface";
+import Post from "../model/post.model";
 
 const getPostDetail = async (req: Request, res: Response) => {
   try {
     const _id: string = req.params._id;
 
-    const post = await Post.findById(_id).populate('user_id');
+    const post = await Post.findById(_id).populate("user_id");
 
     const response: IResponse<any> = {
       result: true,
@@ -32,12 +32,12 @@ const filterPost = async (req: Request, res: Response) => {
   const startIndex = (page - 1) * limit;
 
   const filterInfo = {
-    'accommodation.address.province': province,
-    'accommodation.address.district': district,
-    'accommodation.address.ward': ward,
-    'accommodation.typeAccommdation': type,
-    'accommodation.area': area,
-    'accommodation.retail': retail,
+    "accommodation.address.province": province,
+    "accommodation.address.district": district,
+    "accommodation.address.ward": ward,
+    "accommodation.typeAccommdation": type,
+    "accommodation.area": area,
+    "accommodation.retail": retail,
   };
 
   const filterQuery = getFilterQuery(filterInfo);
@@ -46,7 +46,7 @@ const filterPost = async (req: Request, res: Response) => {
     const posts = await Post.find(filterQuery)
       .skip(startIndex)
       .limit(limit)
-      .sort('typePost');
+      .sort("typePost");
 
     const filterPosts = posts.map((post, i) => {
       post.accommodation.images.length = 1;
@@ -86,12 +86,12 @@ const countPosts = async (req: Request, res: Response) => {
   const { province, district, ward, area, type, retail } = req.body;
 
   const filterInfo = {
-    'accommodation.address.province': province,
-    'accommodation.address.district': district,
-    'accommodation.address.ward': ward,
-    'accommodation.typeAccommdation': type,
-    'accommodation.area': area,
-    'accommodation.retail': retail,
+    "accommodation.address.province": province,
+    "accommodation.address.district": district,
+    "accommodation.address.ward": ward,
+    "accommodation.typeAccommdation": type,
+    "accommodation.area": area,
+    "accommodation.retail": retail,
   };
 
   const filterQuery = getFilterQuery(filterInfo);
@@ -117,7 +117,50 @@ const countPosts = async (req: Request, res: Response) => {
   }
 };
 
-const updatePost = (req: Request, res: Response) => {};
+const updatePost = async (req: Request, res: Response) => {
+  try {
+    const postId: string = req.params.post_id;
+    const {
+      address,
+      typeAccommdation,
+      title,
+      description,
+      price,
+      area,
+      images,
+    } = req.body;
+
+    const arrDescription = description.split("\n");
+
+    const postAfterUpdate = await Post.findByIdAndUpdate(
+      { _id: postId },
+      {
+        "accommodation.address": address,
+        "accommodation.typeAccommdation": typeAccommdation,
+        "accommodation.title": title,
+        "accommodation.price": price,
+        "accommodation.area": area,
+        "accommodation.images": images,
+        "accommodation.description": arrDescription,
+      },
+    );
+
+    const response: IResponse<any> = {
+      result: true,
+      data: postAfterUpdate,
+      error: null,
+    };
+
+    return res.status(200).json({ data: response });
+  } catch (error) {
+    const response: IResponse<any> = {
+      result: true,
+      data: null,
+      error: error.message,
+    };
+    return res.status(200).json({ data: response });
+  }
+};
 
 const createPost = (req: Request, res: Response) => {
   const { timeStart, timeEnd, typePost, user_id, accommodation } = req.body;
@@ -155,10 +198,10 @@ const createPost = (req: Request, res: Response) => {
       if (err) {
         console.log(err);
 
-        throw new Error('fail to save');
+        throw new Error("fail to save");
       }
       console.log(data);
-      res.json({ data: 'success' });
+      res.json({ data: "success" });
     });
   } catch (error) {
     res.json(error);
@@ -167,10 +210,9 @@ const createPost = (req: Request, res: Response) => {
 
 const getPostByUserId = async (req: Request, res: Response) => {
   try {
-    
     const userId = req.params.userId;
 
-    const posts = await Post.find({user_id: userId});
+    const posts = await Post.find({ user_id: userId }).sort({ timeStart: -1 });
 
     const response: IResponse<any> = {
       result: true,
@@ -179,7 +221,6 @@ const getPostByUserId = async (req: Request, res: Response) => {
     };
 
     res.status(200).json({ data: response });
-
   } catch (error) {
     const response: IResponse<any> = {
       result: false,
@@ -197,8 +238,8 @@ const getFilterQuery = (obj: object) => {
     .reduce((filterQuery, field) => {
       let value = field[1];
 
-      if (field[0] === 'accommodation.retail') value = getRangeRetail(field[1]);
-      else if (field[0] === 'accommodation.area')
+      if (field[0] === "accommodation.retail") value = getRangeRetail(field[1]);
+      else if (field[0] === "accommodation.area")
         value = getRangeArea(field[1]);
 
       return { ...filterQuery, [field[0]]: value };
@@ -208,19 +249,19 @@ const getFilterQuery = (obj: object) => {
 const getRangeRetail = (number: number) => {
   switch (number) {
     case 1:
-      return { ['$gt']: 1, ['$lt']: 2 };
+      return { ["$gt"]: 1, ["$lt"]: 2 };
     case 2:
-      return { ['$gt']: 2, ['$lt']: 3 };
+      return { ["$gt"]: 2, ["$lt"]: 3 };
     case 3:
-      return { ['$gt']: 3, ['$lt']: 5 };
+      return { ["$gt"]: 3, ["$lt"]: 5 };
     case 4:
-      return { ['$gt']: 5, ['$lt']: 7 };
+      return { ["$gt"]: 5, ["$lt"]: 7 };
     case 5:
-      return { ['$gt']: 7, ['$lt']: 10 };
+      return { ["$gt"]: 7, ["$lt"]: 10 };
     case 6:
-      return { ['$gt']: 10, ['$lt']: 15 };
+      return { ["$gt"]: 10, ["$lt"]: 15 };
     case 7:
-      return { ['$gt']: 15 };
+      return { ["$gt"]: 15 };
 
     default:
       break;
@@ -230,23 +271,23 @@ const getRangeRetail = (number: number) => {
 const getRangeArea = (number: number) => {
   switch (number) {
     case 1:
-      return { ['$lt']: 20 };
+      return { ["$lt"]: 20 };
     case 2:
-      return { ['$gt']: 20, ['$lt']: 30 };
+      return { ["$gt"]: 20, ["$lt"]: 30 };
     case 3:
-      return { ['$gt']: 30, ['$lt']: 50 };
+      return { ["$gt"]: 30, ["$lt"]: 50 };
     case 4:
-      return { ['$gt']: 50, ['$lt']: 60 };
+      return { ["$gt"]: 50, ["$lt"]: 60 };
     case 5:
-      return { ['$gt']: 60, ['$lt']: 70 };
+      return { ["$gt"]: 60, ["$lt"]: 70 };
     case 6:
-      return { ['$gt']: 70, ['$lt']: 80 };
+      return { ["$gt"]: 70, ["$lt"]: 80 };
     case 7:
-      return { ['$gt']: 80, ['$lt']: 90 };
+      return { ["$gt"]: 80, ["$lt"]: 90 };
     case 8:
-      return { ['$gt']: 90, ['$lt']: 100 };
+      return { ["$gt"]: 90, ["$lt"]: 100 };
     case 9:
-      return { ['$gt']: 100 };
+      return { ["$gt"]: 100 };
 
     default:
       break;
@@ -259,5 +300,5 @@ export default {
   createPost,
   countPosts,
   updatePost,
-  getPostByUserId
+  getPostByUserId,
 };
