@@ -117,7 +117,50 @@ const countPosts = async (req: Request, res: Response) => {
 	}
 };
 
-const updatePost = (req: Request, res: Response) => {};
+const updatePost = async (req: Request, res: Response) => {
+	try {
+		const postId: string = req.params.post_id;
+		const {
+			address,
+			typeAccommdation,
+			title,
+			description,
+			price,
+			area,
+			images,
+		} = req.body;
+
+		const arrDescription = description.split('\n');
+
+		const postAfterUpdate = await Post.findByIdAndUpdate(
+			{ _id: postId },
+			{
+				'accommodation.address': address,
+				'accommodation.typeAccommdation': typeAccommdation,
+				'accommodation.title': title,
+				'accommodation.price': price,
+				'accommodation.area': area,
+				'accommodation.images': images,
+				'accommodation.description': arrDescription,
+			},
+		);
+
+		const response: IResponse<any> = {
+			result: true,
+			data: postAfterUpdate,
+			error: null,
+		};
+
+		return res.status(200).json({ data: response });
+	} catch (error) {
+		const response: IResponse<any> = {
+			result: true,
+			data: null,
+			error: error.message,
+		};
+		return res.status(200).json({ data: response });
+	}
+};
 
 const createPost = (req: Request, res: Response) => {
 	const { timeStart, timeEnd, typePost, user_id, accommodation } = req.body;
@@ -158,7 +201,6 @@ const createPost = (req: Request, res: Response) => {
 				throw new Error('fail to save');
 			}
 			console.log(data);
-
 			res.json({ data: 'success' });
 		});
 	} catch (error) {
