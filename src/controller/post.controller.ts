@@ -125,12 +125,14 @@ const updatePost = async (req: Request, res: Response) => {
 			typeAccommdation,
 			title,
 			description,
-			price,
+			retail,
 			area,
 			images,
 		} = req.body;
+		console.log(postId);
+		console.log('Mảng des', description);
 
-		const arrDescription = description.split('\n');
+		//const arrDescription = description.split('\n');
 
 		const postAfterUpdate = await Post.findByIdAndUpdate(
 			{ _id: postId },
@@ -138,11 +140,12 @@ const updatePost = async (req: Request, res: Response) => {
 				'accommodation.address': address,
 				'accommodation.typeAccommdation': typeAccommdation,
 				'accommodation.title': title,
-				'accommodation.price': price,
+				'accommodation.retail': retail,
 				'accommodation.area': area,
 				'accommodation.images': images,
-				'accommodation.description': arrDescription,
+				'accommodation.description': description,
 			},
+			{ new: true },
 		);
 
 		const response: IResponse<any> = {
@@ -150,6 +153,7 @@ const updatePost = async (req: Request, res: Response) => {
 			data: postAfterUpdate,
 			error: null,
 		};
+		console.log('ket qua', response);
 
 		return res.status(200).json({ data: response });
 	} catch (error) {
