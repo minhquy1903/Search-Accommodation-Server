@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import dotenv from 'dotenv';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import User from '../model/user.model';
-import IResponse from '../interface/response.interface';
+import { Request, Response } from "express";
+import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import User from "../model/user.model";
+import IResponse from "../interface/response.interface";
 
 dotenv.config();
 
@@ -21,10 +21,10 @@ const findByCredentials = async ({
 }) => {
   const user = await User.findOne({ phone });
 
-  if (!user) throw new Error('Invalid login credentials');
+  if (!user) throw new Error("Invalid login credentials");
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
-    throw new Error('Invalid login credentials');
+    throw new Error("Invalid login credentials");
   }
 
   return user;
@@ -34,7 +34,7 @@ const signup = async (req: Request, res: Response) => {
   try {
     const isExist: boolean = await User.exists({ phone: req.body.phone });
 
-    if (isExist) throw new String('phone number was existed');
+    if (isExist) throw new String("phone number was existed");
 
     const user = {
       name: req.body.name,
@@ -146,7 +146,7 @@ const confirmPhone = async (req: Request, res: Response) => {
     ).catch((error) => {
       const response: IResponse<string> = {
         result: false,
-        data: 'update faild',
+        data: "update faild",
         error: error,
       };
       res.json({ data: response });
@@ -154,7 +154,7 @@ const confirmPhone = async (req: Request, res: Response) => {
 
     const response: IResponse<string> = {
       result: true,
-      data: 'updated',
+      data: "updated",
       error: null,
     };
 
@@ -162,7 +162,7 @@ const confirmPhone = async (req: Request, res: Response) => {
   } catch (error) {
     const response: IResponse<string> = {
       result: false,
-      data: 'update faild',
+      data: "update faild",
       error: error,
     };
     res.json({ data: response });
@@ -194,7 +194,7 @@ const getUserInfo = async (req: Request, res: Response) => {
       return res.status(200).json({ data: response });
     }
 
-    res.status(404).json({ data: 'not found' });
+    res.status(404).json({ data: "not found" });
   } catch (error) {
     const response: IResponse<any> = {
       result: false,
@@ -206,33 +206,65 @@ const getUserInfo = async (req: Request, res: Response) => {
   }
 };
 
-const updateUserInformation = async (req: Request, res: Response) =>{
+const updateUserInformation = async (req: Request, res: Response) => {
   try {
-    
-    const {userId, name, phone} = req.body;
+    const { userId, name, phone } = req.body;
 
-    const userInfo = await User.findOneAndUpdate({_id: userId},{
-      name: name,
-      phone: phone
-    })
+    const userInfo = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        name: name,
+        phone: phone,
+      },
+    );
 
     const response: IResponse<any> = {
       result: true,
       data: userInfo,
       error: null,
     };
-    
-    return res.status(200).json({ data: response });
 
+    return res.status(200).json({ data: response });
   } catch (error) {
     const response: IResponse<any> = {
       result: false,
       data: null,
       error: error.error,
     };
-    
+
     return res.status(200).json({ data: response });
   }
-}
+};
 
-export default { signup, login, confirmPhone, getUserInfo, updateUserInformation };
+const updateMoney = async (req: Request, res: Response) => {
+  try {
+    const { money } = req.body;
+    const userId = req.params.user_id;
+
+    const result = await User.findByIdAndUpdate(
+      { _id: userId },
+      { money: money },
+    );
+    const response: IResponse<any> = {
+      result: true,
+      data: result?.money,
+      error: null,
+    };
+    return res.json({ data: response });
+  } catch (error) {
+    const response: IResponse<any> = {
+      result: false,
+      data: null,
+      error: error.message,
+    };
+  }
+};
+
+export default {
+  signup,
+  login,
+  confirmPhone,
+  getUserInfo,
+  updateUserInformation,
+  updateMoney,
+};

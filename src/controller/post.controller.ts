@@ -130,8 +130,6 @@ const updatePost = async (req: Request, res: Response) => {
       images,
     } = req.body;
 
-    const arrDescription = description.split("\n");
-
     const postAfterUpdate = await Post.findByIdAndUpdate(
       { _id: postId },
       {
@@ -141,7 +139,7 @@ const updatePost = async (req: Request, res: Response) => {
         "accommodation.price": price,
         "accommodation.area": area,
         "accommodation.images": images,
-        "accommodation.description": arrDescription,
+        "accommodation.description": description,
       },
     );
 
