@@ -25,7 +25,7 @@ const getPostDetail = async (req: Request, res: Response) => {
 };
 
 const filterPost = async (req: Request, res: Response) => {
-  const { province, district, ward, area, type, retail } = req.body;
+  const { province, district, ward, area, type, retail, newPost } = req.body;
 
   const page: number = parseInt(req.params.page);
   const limit = 15;
@@ -42,12 +42,21 @@ const filterPost = async (req: Request, res: Response) => {
 
   const filterQuery = getFilterQuery(filterInfo);
 
-  try {
-    const posts = await Post.find(filterQuery)
-      .skip(startIndex)
-      .limit(limit)
-      .sort("typePost");
+  console.log(filterQuery);
 
+  try {
+    let posts: Array<any> = [];
+    if (newPost)
+      posts = await Post.find(filterQuery)
+        .skip(startIndex)
+        .limit(limit)
+        .sort({ timeStart: -1 });
+    else
+      posts = await Post.find(filterQuery)
+        .skip(startIndex)
+        .limit(limit)
+        .sort("typePost")
+        .sort({ timeStart: -1 });
     const filterPosts = posts.map((post, i) => {
       post.accommodation.images.length = 1;
       const filterPost = {
