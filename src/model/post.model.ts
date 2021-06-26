@@ -6,7 +6,7 @@ const PostSchema = new Schema({
   timeStart: { type: Date, require: true },
   timeEnd: { type: Date, require: true },
   typePost: Number,
-  isConfirm: Number,
+  status: Number,
   accommodation: {
     title: {
       type: String,
