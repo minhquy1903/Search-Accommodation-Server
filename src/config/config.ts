@@ -1,9 +1,9 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 8000;
-const HOSTNAME = process.env.HOST || 'localhost';
+const HOSTNAME = process.env.HOST || "localhost";
 
 const MONGO_OPTION = {
   useNewUrlParser: true,
@@ -13,10 +13,10 @@ const MONGO_OPTION = {
   autoIndex: true,
 };
 
-const MONGO_USERNAME = process.env.MONGO_USERNAME || '127.0.0.1:27017';
-const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '0964564273p';
-const DATABASE_NAME = process.env.DATABASE_NAME || 'sativa_accommodation';
-const MONGO_HOST = process.env.MONGO_URL || 'mink.c3zle.gcp.mongodb.net';
+const MONGO_USERNAME = process.env.MONGO_USERNAME || "127.0.0.1:27017";
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD || "0964564273p";
+const DATABASE_NAME = process.env.DATABASE_NAME || "timtrovn";
+const MONGO_HOST = process.env.MONGO_URL || "mink.c3zle.gcp.mongodb.net";
 
 const MONGO = {
   host: MONGO_HOST,

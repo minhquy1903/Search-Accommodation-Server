@@ -1,8 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+const mongoose = require("mongoose");
 
-import IPost from "../interface/post.interface";
-
-const PostSchema = new Schema({
+const PostSchema = new mongoose.Schema({
   timeStart: { type: Date, require: true },
   timeEnd: { type: Date, require: true },
   typePost: Number,
@@ -40,6 +38,6 @@ const PostSchema = new Schema({
   },
 });
 
-const Post = mongoose.model<IPost>("Post", PostSchema);
+const Post = mongoose.model("Post", PostSchema);
 
-export default Post;
+module.exports = Post;

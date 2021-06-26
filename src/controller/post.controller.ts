@@ -25,6 +25,7 @@ const getPostDetail = async (req: Request, res: Response) => {
 };
 
 const filterPost = async (req: Request, res: Response) => {
+<<<<<<< HEAD
 	const { province, district, ward, area, type, retail } = req.body;
 
 	const page: number = parseInt(req.params.page);
@@ -80,6 +81,72 @@ const filterPost = async (req: Request, res: Response) => {
 		};
 		res.status(200).json({ data: response });
 	}
+=======
+  const { province, district, ward, area, type, retail, newPost } = req.body;
+
+  const page: number = parseInt(req.params.page);
+  const limit = 15;
+  const startIndex = (page - 1) * limit;
+
+  const filterInfo = {
+    "accommodation.address.province": province,
+    "accommodation.address.district": district,
+    "accommodation.address.ward": ward,
+    "accommodation.typeAccommdation": type,
+    "accommodation.area": area,
+    "accommodation.retail": retail,
+  };
+
+  const filterQuery = getFilterQuery(filterInfo);
+
+  console.log(filterQuery);
+
+  try {
+    let posts: Array<any> = [];
+    if (newPost)
+      posts = await Post.find(filterQuery)
+        .skip(startIndex)
+        .limit(limit)
+        .sort({ timeStart: -1 });
+    else
+      posts = await Post.find(filterQuery)
+        .skip(startIndex)
+        .limit(limit)
+        .sort("typePost")
+        .sort({ timeStart: -1 });
+    const filterPosts = posts.map((post, i) => {
+      post.accommodation.images.length = 1;
+      const filterPost = {
+        timeStart: post.timeStart,
+        typePost: post.typePost,
+        _id: post._id,
+        accommodation: {
+          area: post.accommodation.area,
+          title: post.accommodation.title,
+          retail: post.accommodation.retail,
+          address: post.accommodation.address,
+          images: post.accommodation.images,
+        },
+      };
+      return filterPost;
+    });
+
+    const response: IResponse<any> = {
+      result: true,
+      data: filterPosts,
+      error: null,
+    };
+
+    res.status(200).json({ data: response });
+  } catch (error) {
+    const response: IResponse<any> = {
+      result: false,
+      data: null,
+      error: error,
+    };
+    res.status(200).json({ data: response });
+  }
+>>>>>>> 8bda1618a3208b19c9b03148f28d13fac12ca409
 };
 
 const countPosts = async (req: Request, res: Response) => {
