@@ -109,9 +109,11 @@ const filterPost = async (req: Request, res: Response) => {
 const countPosts = async (req: Request, res: Response) => {
   const { province, district, ward, area, type, retail, typePost, status } =
     req.body;
+  const timeExpire = new Date();
 
   const filterInfo = {
     typePost: typePost,
+    timeEnd: { $gte: timeExpire },
     status: status,
     "accommodation.address.province": province,
     "accommodation.address.district": district,
@@ -281,7 +283,7 @@ const getPostByUserId = async (req: Request, res: Response) => {
 
 const getFilterQuery = (obj: object) => {
   return Object.entries(obj)
-    .filter((item) => item[1])
+    .filter((item) => item[1] || item[1] === 0)
     .reduce((filterQuery, field) => {
       let value = field[1];
 
