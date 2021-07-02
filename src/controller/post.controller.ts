@@ -78,6 +78,7 @@ const filterPost = async (req: Request, res: Response) => {
         timeStart: post.timeStart,
         typePost: post.typePost,
         _id: post._id,
+        status: post.status,
         accommodation: {
           area: post.accommodation.area,
           title: post.accommodation.title,
