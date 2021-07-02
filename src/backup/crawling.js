@@ -113,7 +113,7 @@ function getDetailPost(url, type) {
             timeEnd,
             typePost,
             user_id,
-            isConfirm: true,
+            status: 1,
             accommodation: {
               address,
               title,
@@ -153,7 +153,7 @@ function getDetailPost(url, type) {
             timeStart,
             timeEnd,
             typePost,
-            isConfirm: true,
+            status: 1,
             user_id: data._id,
             accommodation: {
               address,

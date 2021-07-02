@@ -25,13 +25,28 @@ const getPostDetail = async (req: Request, res: Response) => {
 };
 
 const filterPost = async (req: Request, res: Response) => {
-  const { province, district, ward, area, type, retail, newPost } = req.body;
+  const {
+    province,
+    district,
+    ward,
+    area,
+    type,
+    retail,
+    newPost,
+    typePost,
+    status,
+  } = req.body;
 
   const page: number = parseInt(req.params.page);
   const limit = 15;
   const startIndex = (page - 1) * limit;
 
+  const timeExpire = new Date();
+
   const filterInfo = {
+    typePost: typePost,
+    status: status,
+    timeEnd: { $gte: timeExpire },
     "accommodation.address.province": province,
     "accommodation.address.district": district,
     "accommodation.address.ward": ward,
@@ -92,9 +107,12 @@ const filterPost = async (req: Request, res: Response) => {
 };
 
 const countPosts = async (req: Request, res: Response) => {
-  const { province, district, ward, area, type, retail } = req.body;
+  const { province, district, ward, area, type, retail, typePost, status } =
+    req.body;
 
   const filterInfo = {
+    typePost: typePost,
+    status: status,
     "accommodation.address.province": province,
     "accommodation.address.district": district,
     "accommodation.address.ward": ward,
@@ -169,7 +187,29 @@ const updatePost = async (req: Request, res: Response) => {
   }
 };
 
-const createPost = (req: Request, res: Response) => {
+const confirmPost = async (req: Request, res: Response) => {
+  const postId = req.params.post_id;
+  const { status } = req.params;
+
+  try {
+    const result = await Post.updateOne({ _id: postId }, { status: status });
+
+    if (result.nModified === 1) {
+      const response: IResponse<any> = {
+        result: true,
+        data: null,
+        error: null,
+      };
+
+      res.json({ data: response });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(404);
+  }
+};
+
+const createPost = async (req: Request, res: Response) => {
   const { timeStart, timeEnd, typePost, user_id, accommodation } = req.body;
 
   const {
@@ -308,4 +348,5 @@ export default {
   countPosts,
   updatePost,
   getPostByUserId,
+  confirmPost,
 };

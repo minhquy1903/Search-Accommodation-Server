@@ -18,6 +18,7 @@ postRouter
     "/get-posts-by-userid/:userId",
     controller.postController.getPostByUserId,
   )
-  .put("/:post_id", controller.postController.updatePost);
+  .put("/:post_id", controller.postController.updatePost)
+  .put("/confirm/:post_id", controller.postController.confirmPost);
 
 export default postRouter;
