@@ -126,14 +126,25 @@ function getDetailPost(url, type) {
 						},
 					});
 
-					newPost.save((err, data) => {
-						if (err) {
-							console.log(err);
+					newPost
+						.save((err, data) => {
+							if (err) {
+								console.log(err);
 
-							throw new Error('fail to save');
-						}
-						console.log(data);
-					});
+								throw new Error('fail to save');
+							}
+							console.log(data);
+						})
+						.then((data) => {
+							let countDate = Math.abs(timeStart - timeEnd);
+							const newOrder = new Order({
+								date: timeStart,
+								idPost: data._id,
+								typePost,
+								user_id,
+								numberDay: countDate,
+							});
+						});
 				} catch (error) {
 					console.log(error);
 				}
