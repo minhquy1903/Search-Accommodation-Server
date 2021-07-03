@@ -55,6 +55,8 @@ const filterPost = async (req: Request, res: Response) => {
 		'accommodation.retail': retail,
 	};
 
+	console.log(filterInfo);
+
 	const filterQuery = getFilterQuery(filterInfo);
 
 	console.log(filterQuery);
@@ -79,14 +81,17 @@ const filterPost = async (req: Request, res: Response) => {
 				timeStart: post.timeStart,
 				typePost: post.typePost,
 				_id: post._id,
+				status: post.status,
 				accommodation: {
 					area: post.accommodation.area,
 					title: post.accommodation.title,
 					retail: post.accommodation.retail,
 					address: post.accommodation.address,
 					images: post.accommodation.images,
+					typeAccommdation: post.accommodation.typeAccommdation,
 				},
 			};
+
 			return filterPost;
 		});
 
@@ -111,9 +116,11 @@ const countPosts = async (req: Request, res: Response) => {
 	const { province, district, ward, area, type, retail, typePost, status } =
 		req.body;
 
+	const timeExpire = new Date();
 	const filterInfo = {
 		typePost: typePost,
 		status: status,
+		timeEnd: { $gte: timeExpire },
 		'accommodation.address.province': province,
 		'accommodation.address.district': district,
 		'accommodation.address.ward': ward,
@@ -190,10 +197,12 @@ const updatePost = async (req: Request, res: Response) => {
 
 const confirmPost = async (req: Request, res: Response) => {
 	const postId = req.params.post_id;
-	const { status } = req.params;
-
+	const { status } = req.body;
 	try {
-		const result = await Post.updateOne({ _id: postId }, { status: status });
+		const result = await Post.updateOne(
+			{ _id: postId },
+			{ $set: { status: status } },
+		);
 
 		if (result.nModified === 1) {
 			const response: IResponse<any> = {
@@ -230,6 +239,7 @@ const createPost = async (req: Request, res: Response) => {
 			timeEnd,
 			typePost,
 			user_id,
+			status: 0,
 			accommodation: {
 				address,
 				title,
@@ -253,6 +263,29 @@ const createPost = async (req: Request, res: Response) => {
 		});
 	} catch (error) {
 		res.json(error);
+	}
+};
+
+const deletePostById = async (req: Request, res: Response) => {
+	try {
+		const postId = req.params.post_id;
+		const posts = await Post.findByIdAndDelete({ _id: postId });
+
+		const response: IResponse<any> = {
+			result: true,
+			data: null,
+			error: null,
+		};
+
+		res.status(200).json({ data: response });
+	} catch (error) {
+		const response: IResponse<any> = {
+			result: false,
+			data: null,
+			error: error.error,
+		};
+
+		res.status(200).json({ data: response });
 	}
 };
 
@@ -282,7 +315,7 @@ const getPostByUserId = async (req: Request, res: Response) => {
 
 const getFilterQuery = (obj: object) => {
 	return Object.entries(obj)
-		.filter((item) => item[1])
+		.filter((item) => item[1] || item[1] === 0)
 		.reduce((filterQuery, field) => {
 			let value = field[1];
 
@@ -350,4 +383,5 @@ export default {
 	updatePost,
 	getPostByUserId,
 	confirmPost,
+	deletePostById,
 };
