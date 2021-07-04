@@ -100,11 +100,19 @@ function getDetailPost(url, type) {
 				return el.split(' ')[2];
 			});
 
-			const timeStart = new Date(`${formatDate(date[0])}T${hours[0]}`);
-			const timeEnd = new Date(`${formatDate(date[1])}T${hours[1]}`);
+			const newDateC = new Date('2021-07-20T06:00:00');
+			const timeStart = new Date(`${formatDate(date[0])}T06:00:00`);
+			const timeEnd = new Date(newDateC);
 			/////
 
 			const usr = await User.findOne({ phone: phone });
+			const checkTypePostMoney = (typePost) => {
+				if (typePost === 1) return 50000;
+				else if (typePost === 2) return 30000;
+				else if (typePost === 3) return 20000;
+				else if (typePost === 4) return 10000;
+				else return 2000;
+			};
 
 			if (usr) {
 				let user_id = usr._id;
@@ -127,22 +135,33 @@ function getDetailPost(url, type) {
 					});
 
 					newPost
-						.save((err, data) => {
+						.save(/*(err, data) => {
 							if (err) {
 								console.log(err);
 
 								throw new Error('fail to save');
 							}
 							console.log(data);
-						})
-						.then((data) => {
+						}*/)
+						.then((datum) => {
 							let countDate = Math.abs(timeStart - timeEnd);
+							countDate = Math.floor(countDate / (1000 * 3600 * 24));
+							let totalMoney = checkTypePostMoney(typePost) * countDate;
 							const newOrder = new Order({
 								date: timeStart,
-								idPost: data._id,
+								total: totalMoney,
+								idPost: datum._id,
 								typePost,
-								user_id,
+								user_id: user_id,
 								numberDay: countDate,
+							});
+							newOrder.save((err, data) => {
+								if (err) {
+									console.log(err);
+
+									throw new Error('fail to save');
+								}
+								console.log(data);
 							});
 						});
 				} catch (error) {
@@ -178,13 +197,27 @@ function getDetailPost(url, type) {
 						},
 					});
 
-					newPost.save((err, data) => {
-						if (err) {
-							console.log(err);
+					newPost.save().then((datum) => {
+						let countDate = Math.abs(timeStart - timeEnd);
+						countDate = Math.floor(countDate / (1000 * 3600 * 24));
+						let totalMoney = checkTypePostMoney(typePost) * countDate;
+						const newOrder = new Order({
+							date: timeStart,
+							total: totalMoney,
+							idPost: datum._id,
+							typePost,
+							user_id: data._id,
+							numberDay: countDate,
+						});
 
-							throw new Error('fail to save');
-						}
-						console.log(data);
+						newOrder.save((err, data) => {
+							if (err) {
+								console.log(err);
+
+								throw new Error('fail to save');
+							}
+							console.log(data);
+						});
 					});
 				} catch (error) {
 					console.log(error);
