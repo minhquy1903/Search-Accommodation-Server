@@ -259,7 +259,7 @@ const createPost = async (req: Request, res: Response) => {
 				throw new Error('fail to save');
 			}
 			console.log(data);
-			res.json({ data: 'success' });
+			res.json({ data: 'success', id: data._id });
 		});
 	} catch (error) {
 		res.json(error);
