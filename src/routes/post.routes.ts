@@ -6,19 +6,20 @@ const postRouter = express.Router();
 // postRouter.use(auth);
 
 postRouter.get("/", (req, res) => {
-  res.json({ result: "hello middleware" });
+	res.json({ result: "hello middleware" });
 });
 
 postRouter
-  .post("/create-post", controller.postController.createPost)
-  .get("/get-post/:_id", controller.postController.getPostDetail)
-  .post("/filter-posts/:page", controller.postController.filterPost)
-  .post("/count-posts", controller.postController.countPosts)
-  .get(
-    "/get-posts-by-userid/:userId",
-    controller.postController.getPostByUserId,
-  )
-  .put("/:post_id", controller.postController.updatePost)
-  .put("/confirm/:post_id", controller.postController.confirmPost);
+	.post("/create-post", controller.postController.createPost)
+	.get("/get-post/:_id", controller.postController.getPostDetail)
+	.post("/filter-posts/:page", controller.postController.filterPost)
+	.post("/count-posts", controller.postController.countPosts)
+	.get(
+		"/get-posts-by-userid/:userId",
+		controller.postController.getPostByUserId,
+	)
+	.put("/:post_id", controller.postController.updatePost)
+	.put("/confirm/:post_id", controller.postController.confirmPost)
+	.delete("/delete/:post_id", controller.postController.deletePostById);
 
 export default postRouter;
