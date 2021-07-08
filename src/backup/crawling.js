@@ -3,6 +3,7 @@ const cheerio = require("cheerio");
 const db = require("./db");
 const Post = require("./postModel");
 const User = require("./userModel");
+const Order = require("./orderModel");
 
 const formatDate = (date) => {
   const dateArr = date.split("/");
@@ -99,11 +100,19 @@ function getDetailPost(url, type) {
         return el.split(" ")[2];
       });
 
-      const timeStart = new Date(`${formatDate(date[0])}T${hours[0]}`);
-      const timeEnd = new Date(`${formatDate(date[1])}T${hours[1]}`);
+      const newDateC = new Date("2021-07-20T06:00:00");
+      const timeStart = new Date(`${formatDate(date[0])}T06:00:00`);
+      const timeEnd = new Date(newDateC);
       /////
 
       const usr = await User.findOne({ phone: phone });
+      const checkTypePostMoney = (typePost) => {
+        if (typePost === 1) return 50000;
+        else if (typePost === 2) return 30000;
+        else if (typePost === 3) return 20000;
+        else if (typePost === 4) return 10000;
+        else return 2000;
+      };
 
       if (usr) {
         let user_id = usr._id;
@@ -113,7 +122,7 @@ function getDetailPost(url, type) {
             timeEnd,
             typePost,
             user_id,
-            status: 1,
+            isConfirm: true,
             accommodation: {
               address,
               title,
@@ -125,14 +134,36 @@ function getDetailPost(url, type) {
             },
           });
 
-          newPost.save((err, data) => {
-            if (err) {
-              console.log(err);
+          newPost
+            .save(/*(err, data) => {
+							if (err) {
+								console.log(err);
 
-              throw new Error("fail to save");
-            }
-            console.log(data);
-          });
+								throw new Error('fail to save');
+							}
+							console.log(data);
+						}*/)
+            .then((datum) => {
+              let countDate = Math.abs(timeStart - timeEnd);
+              countDate = Math.floor(countDate / (1000 * 3600 * 24));
+              let totalMoney = checkTypePostMoney(typePost) * countDate;
+              const newOrder = new Order({
+                date: timeStart,
+                total: totalMoney,
+                idPost: datum._id,
+                typePost,
+                user_id: user_id,
+                numberDay: countDate,
+              });
+              newOrder.save((err, data) => {
+                if (err) {
+                  console.log(err);
+
+                  throw new Error("fail to save");
+                }
+                console.log(data);
+              });
+            });
         } catch (error) {
           console.log(error);
         }
@@ -153,7 +184,7 @@ function getDetailPost(url, type) {
             timeStart,
             timeEnd,
             typePost,
-            status: 1,
+            isConfirm: true,
             user_id: data._id,
             accommodation: {
               address,
@@ -166,13 +197,27 @@ function getDetailPost(url, type) {
             },
           });
 
-          newPost.save((err, data) => {
-            if (err) {
-              console.log(err);
+          newPost.save().then((datum) => {
+            let countDate = Math.abs(timeStart - timeEnd);
+            countDate = Math.floor(countDate / (1000 * 3600 * 24));
+            let totalMoney = checkTypePostMoney(typePost) * countDate;
+            const newOrder = new Order({
+              date: timeStart,
+              total: totalMoney,
+              idPost: datum._id,
+              typePost,
+              user_id: data._id,
+              numberDay: countDate,
+            });
 
-              throw new Error("fail to save");
-            }
-            console.log(data);
+            newOrder.save((err, data) => {
+              if (err) {
+                console.log(err);
+
+                throw new Error("fail to save");
+              }
+              console.log(data);
+            });
           });
         } catch (error) {
           console.log(error);
@@ -204,6 +249,6 @@ function getUrlPost(url, type) {
 
 for (let i = 1; i <= 500; i++) {
   if (i < 40) getUrlPost(`https://phongtro123.com/?page=${i}`, 1);
-  else if (i < 200) getUrlPost(`https://phongtro123.com/?page=${i}`, 2);
+  if (i < 200) getUrlPost(`https://phongtro123.com/?page=${i}`, 2);
   else getUrlPost(`https://phongtro123.com/?page=${i}`, 3);
 }
