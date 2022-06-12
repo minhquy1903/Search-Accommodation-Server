@@ -41,12 +41,12 @@ const filterPost = async (req: Request, res: Response) => {
 	const limit = 15;
 	const startIndex = (page - 1) * limit;
 
-	const timeExpire = new Date();
+	// const timeExpire = new Date();
 
 	const filterInfo = {
 		typePost: typePost,
-		status: status,
-		timeEnd: { $gte: timeExpire },
+		// status: status,
+		// timeEnd: { $gte: timeExpire },
 		"accommodation.address.province": province,
 		"accommodation.address.district": district,
 		"accommodation.address.ward": ward,
@@ -55,11 +55,9 @@ const filterPost = async (req: Request, res: Response) => {
 		"accommodation.retail": retail,
 	};
 
-	console.log(filterInfo);
-
 	const filterQuery = getFilterQuery(filterInfo);
 
-	console.log(filterQuery);
+	console.log("filterQuery", filterQuery);
 
 	try {
 		let posts: Array<any> = [];
@@ -95,6 +93,8 @@ const filterPost = async (req: Request, res: Response) => {
 			return filterPost;
 		});
 
+		console.log("filter posts", filterPosts)
+
 		const response: IResponse<any> = {
 			result: true,
 			data: filterPosts,
@@ -116,11 +116,11 @@ const countPosts = async (req: Request, res: Response) => {
 	const { province, district, ward, area, type, retail, typePost, status } =
 		req.body;
 
-	const timeExpire = new Date();
+	// const timeExpire = new Date();
 	const filterInfo = {
 		typePost: typePost,
-		status: status,
-		timeEnd: { $gte: timeExpire },
+		// status: status,
+		// timeEnd: { $gte: timeExpire },
 		"accommodation.address.province": province,
 		"accommodation.address.district": district,
 		"accommodation.address.ward": ward,
@@ -131,8 +131,10 @@ const countPosts = async (req: Request, res: Response) => {
 
 	const filterQuery = getFilterQuery(filterInfo);
 
+	console.log('filter query', filterQuery);
+
 	try {
-		const numberOfPosts: number = await Post.count(filterQuery);
+		const numberOfPosts: number = await Post.countDocuments(filterQuery);
 
 		const response: IResponse<number> = {
 			result: true,
